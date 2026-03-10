@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZonaAI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- Markdown and Code Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+
+<body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <h2>Initializing ZonaAI...</h2>
+    </div>
+
+    <!-- Background Elements -->
+    <div class="bg-elements">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <nav>
+        <div class="logo">
+            <span class="gradient-text">ZonaAI</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#search-hub">Search</a></li>
+            <li><a href="#video-creation">Video Creation</a></li>
+            <li><a href="#editing">Editing</a></li>
+            <li><a href="#books">Books</a></li>
+        </ul>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <!-- Home Section -->
+        <section id="home" class="page-section active-section">
+            <div class="home-container">
+                <h1 class="typing-text">Your Smart <span class="gradient-text">AI World</span> Starts Here<span
+                        class="cursor">|</span></h1>
+
+                <div class="search-container glass-panel">
+                    <input type="text" id="ai-search" placeholder="Ask anything, spark creativity...">
+                    <button class="search-btn" id="ai-search-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="chat-response-container hidden glass-panel" id="ai-response-box">
+                    <div class="user-query" id="user-query-text"></div>
+                    <div class="ai-answer">
+                        <div class="typing-indicator hidden" id="ai-typing">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="answer-content hidden" id="ai-answer-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Hub Section -->
+        <section id="search-hub" class="page-section hidden-section">
+            <div class="section-header">
+                <h2>AI <span class="gradient-text">Search & Assistant</span></h2>
+                <p>All the powerful features of ChatGPT, Claude, and more in one place</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('chat', 'Conversational Chat', 'Talk to ZonaAI about anything, just like ChatGPT.')">
+                    <div class="feature-icon">💬</div>
+                    <h3>Conversational Chat</h3>
+                    <p>Context-aware conversations, complex problem-solving, and human-like interactions across any
+                        topic.</p>
+                </div>
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('code', 'Code Copilot', 'Write the problem you are trying to solve and get the Python, JS, or HTML code.')">
+                    <div class="feature-icon">💻</div>
+                    <h3>Code Copilot</h3>
+                    <p>Generate, debug, and explain complex code in seconds. Supports Python, JS, HTML, and 50+
+                        languages.</p>
+                </div>
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('summarize', 'Smart Summarizer', 'Paste long text, articles, or books here and I will summarize it for you.')">
+                    <div class="feature-icon">📝</div>
+                    <h3>Smart Summarizer</h3>
+                    <p>Transform long documents, books, or articles into concise, easy-to-read bullet points.</p>
+                </div>
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('translate', 'Neural Translation', 'Type any text and I will translate it flawlessly to Arabic or English.')">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Neural Translation</h3>
+                    <p>Flawless translation recognizing context, cultural nuances, and idioms in over 100 languages.</p>
+                </div>
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('vision', 'Vision AI', 'Upload an image and let the AI analyze, describe, or extract text and data with incredible accuracy.')">
+                    <div class="feature-icon">👁️</div>
+                    <h3>Vision AI</h3>
+                    <p>Upload an image and let the AI analyze, describe, or extract text and data with incredible
+                        accuracy.</p>
+                </div>
+                <div class="feature-card glass-panel"
+                    onclick="openFeatureModal('writer', 'Creative Writer', 'Tell me what to write: an email, a blog post, poetry, or a marketing script.')">
+                    <div class="feature-icon">✍️</div>
+                    <h3>Creative Writer</h3>
+                    <p>Generate high-quality essays, emails, poetry, and marketing copy customized to your tone.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Python Backend Execution Modal -->
+        <div id="ai-modal" class="modal hidden">
+            <div class="modal-content glass-panel">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h2 id="modal-title" class="gradient-text">Feature Name</h2>
+                <p id="modal-desc" style="color: var(--text-muted); margin-bottom: 1rem;">Feature description here.</p>
+                <textarea id="modal-input" placeholder="Type your input here..."></textarea>
+                <button class="primary-btn" onclick="runBackendFeature()" style="margin-top: 1rem; width: 100%;">
+                    <span class="btn-text" id="modal-btn-text">Generate with Python Backend ✨</span>
+                    <div id="modal-loader" class="btn-loader hidden" style="position: relative; margin-left:10px;">
+                    </div>
+                </button>
+                <div id="modal-output" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- Video Creation Section -->
+        <section id="video-creation" class="page-section hidden-section">
+            <div class="section-header">
+                <h2>AI <span class="gradient-text">Video Creation</span></h2>
+                <p>Transform static images into realistic animated videos</p>
+            </div>
+
+            <div class="video-workspace glass-panel">
+                <div class="upload-area" id="video-upload-area">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>Drag & Drop your image or <span>Browse</span></p>
+                    <input type="file" id="video-image-input" accept="image/*" hidden>
+                </div>
+
+                <div class="preview-area hidden" id="video-preview-area">
+                    <div class="preview-container">
+                        <img id="video-img-preview" src="" alt="Preview">
+                        <div class="scan-line"></div>
+                    </div>
+                    <div class="controls">
+                        <button id="generate-video-btn" class="primary-btn">
+                            <span class="btn-text">Generate Video Effect</span>
+                            <div class="btn-loader hidden"></div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-area hidden" id="video-result-area">
+                    <div class="generated-video-placeholder">
+                        <div class="play-btn"></div>
+                    </div>
+                    <button class="secondary-btn download-btn">Download Video</button>
+                    <button class="text-btn reset-video-btn">Create Another</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Editing Section -->
+        <section id="editing" class="page-section hidden-section">
+            <div class="section-header">
+                <h2>Smart <span class="gradient-text">Editing Studio</span></h2>
+                <p>Enhance your media with AI-powered tools</p>
+            </div>
+
+            <div class="editing-layout">
+                <div class="editing-preview glass-panel">
+                    <div class="upload-area" id="edit-upload-area">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Upload Image or Video</p>
+                        <input type="file" id="edit-media-input" accept="image/*,video/*" hidden>
+                    </div>
+                    <div class="media-container hidden" id="edit-media-container">
+                        <img id="edit-img-preview" src="" alt="Edit Preview">
+                    </div>
+                </div>
+
+                <div class="editing-tools glass-panel">
+                    <h3>Adjustments</h3>
+
+                    <div class="tool-group">
+                        <label>Brightness</label>
+                        <input type="range" id="brightness" min="0" max="200" value="100">
+                    </div>
+                    <div class="tool-group">
+                        <label>Contrast</label>
+                        <input type="range" id="contrast" min="0" max="200" value="100">
+                    </div>
+
+                    <div class="tool-group">
+                        <label>AI Filters</label>
+                        <div class="filter-options">
+                            <button class="filter-btn active" data-filter="none">None</button>
+                            <button class="filter-btn" data-filter="cyberpunk">Cyberpunk</button>
+                            <button class="filter-btn" data-filter="cinematic">Cinematic</button>
+                            <button class="filter-btn" data-filter="ethereal">Ethereal</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Trim (Video Only)</label>
+                        <div class="trim-timeline">
+                            <div class="trim-handles"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="download-edit-btn" class="primary-btn" disabled>Download Edited File</button>
+                        <button id="reset-edits-btn" class="text-btn">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Books Section -->
+        <section id="books" class="page-section hidden-section">
+            <div class="section-header">
+                <h2>AI <span class="gradient-text">Psychology Library</span></h2>
+                <p>Expand your mind with curated knowledge</p>
+            </div>
+
+            <div class="daily-quote glass-panel" style="text-align: center;">
+                <h3>Thought of the Day</h3>
+                <p id="quote-text">"Loading insight..."</p>
+
+                <div class="quote-translation-controls"
+                    style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <label for="quote-lang" style="font-size: 0.9em; color: var(--text-muted);">Translate to:</label>
+                    <select id="quote-lang"
+                        style="padding: 5px 10px; border-radius: 5px; background: rgba(255,255,255,0.1); color: var(--text-main); border: 1px solid rgba(255,255,255,0.2); outline: none;">
+                        <option value="Arabic">العربية (Arabic)</option>
+                        <option value="French">الفرنسية (French)</option>
+                        <option value="Spanish">الإسبانية (Spanish)</option>
+                        <option value="German">الألمانية (German)</option>
+                        <option value="Japanese">اليابانية (Japanese)</option>
+                    </select>
+                </div>
+                <p id="quote-text-translated"
+                    style="margin-top: 15px; font-size: 1.1rem; color: var(--primary); font-style: italic;"></p>
+            </div>
+
+            <div class="books-grid">
+                <!-- Book Cards will be generated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
