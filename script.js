@@ -98,8 +98,8 @@ const aiAnswerContent = document.getElementById('ai-answer-content');
 
 const aiCache = {};
 
-// If you deploy the Python backend to the cloud (e.g. Render/Vercel), replace 'http://127.0.0.1:8000' with your new real Cloud URL like 'https://my-zona-ai.onrender.com'
-const API_BASE = 'http://127.0.0.1:8000';
+// This will automatically point to your Python server whether it's on your computer or the cloud
+const API_BASE = window.location.origin.includes('file://') ? 'http://127.0.0.1:8000' : window.location.origin;
 
 async function fetchAnswerFromSource(query) {
     if (aiCache[query]) return aiCache[query];
@@ -334,74 +334,83 @@ resetVideoBtn.addEventListener('click', () => {
 });
 
 
-// Editing Logic
+// AI Video Studio Logic (CapCut Style)
 const editUploadArea = document.getElementById('edit-upload-area');
 const editMediaInput = document.getElementById('edit-media-input');
 const editMediaContainer = document.getElementById('edit-media-container');
-const editImgPreview = document.getElementById('edit-img-preview');
-const downloadEditBtn = document.getElementById('download-edit-btn');
-const resetEditsBtn = document.getElementById('reset-edits-btn');
+const editVideoPreview = document.getElementById('edit-video-preview');
+const runAiEditBtn = document.getElementById('run-ai-edit-btn');
+const editResultArea = document.getElementById('edit-result-area');
+const editFinalVideo = document.getElementById('edit-final-video');
+const downloadFinalVideo = document.getElementById('download-final-video');
+const aiOptCards = document.querySelectorAll('.ai-opt-card');
 
-const brightnessCtrl = document.getElementById('brightness');
-const contrastCtrl = document.getElementById('contrast');
-const filterBtns = document.querySelectorAll('.filter-btn');
-
-let currentFilter = 'none';
+let selectedAction = 'cinematic';
 
 editUploadArea.addEventListener('click', () => editMediaInput.click());
+
 editMediaInput.addEventListener('change', function () {
     if (this.files && this.files[0]) {
         const file = this.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            editImgPreview.src = e.target.result;
-            editUploadArea.classList.add('hidden');
-            editMediaContainer.classList.remove('hidden');
-            downloadEditBtn.disabled = false;
-            applyEdits();
-        }
-        reader.readAsDataURL(file);
+        const url = URL.createObjectURL(file);
+        editVideoPreview.src = url;
+        editUploadArea.classList.add('hidden');
+        editMediaContainer.classList.remove('hidden');
     }
 });
 
-function applyEdits() {
-    let filterString = `brightness(${brightnessCtrl.value}%) contrast(${contrastCtrl.value}%)`;
-
-    switch (currentFilter) {
-        case 'cyberpunk':
-            filterString += ' hue-rotate(90deg) saturate(200%)';
-            break;
-        case 'cinematic':
-            filterString += ' sepia(30%) contrast(120%) saturate(80%)';
-            break;
-        case 'ethereal':
-            filterString += ' blur(1px) brightness(120%) saturate(150%) hue-rotate(-20deg)';
-            break;
-    }
-
-    editImgPreview.style.filter = filterString;
-}
-
-brightnessCtrl.addEventListener('input', applyEdits);
-contrastCtrl.addEventListener('input', applyEdits);
-
-filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        applyEdits();
+aiOptCards.forEach(card => {
+    card.addEventListener('click', () => {
+        aiOptCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        selectedAction = card.dataset.action;
     });
 });
 
-resetEditsBtn.addEventListener('click', () => {
-    brightnessCtrl.value = 100;
-    contrastCtrl.value = 100;
-    currentFilter = 'none';
-    filterBtns.forEach(b => b.classList.remove('active'));
-    document.querySelector('[data-filter="none"]').classList.add('active');
+runAiEditBtn.addEventListener('click', async () => {
+    const file = editMediaInput.files[0];
+    if (!file) return;
 
-    if (editImgPreview.src) applyEdits();
+    runAiEditBtn.disabled = true;
+    const btnText = runAiEditBtn.querySelector('.btn-text');
+    const btnLoader = runAiEditBtn.querySelector('.btn-loader');
+
+    btnText.textContent = "AI is Editing...";
+    btnLoader.classList.remove('hidden');
+
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('action', selectedAction);
+
+        const response = await fetch(API_BASE + '/api/edit_video', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+            alert("AI Error: " + data.error);
+        } else {
+            editMediaContainer.classList.add('hidden');
+            editResultArea.classList.remove('hidden');
+            const fullUrl = API_BASE + data.video_url;
+            editFinalVideo.src = fullUrl;
+            downloadFinalVideo.href = fullUrl;
+        }
+    } catch (e) {
+        console.error(e);
+        alert("Connection Error. Is your Python server running?");
+    } finally {
+        runAiEditBtn.disabled = false;
+        btnText.textContent = "Run AI Montage ✨";
+        btnLoader.classList.add('hidden');
+    }
+});
+
+document.getElementById('reset-edits-btn').addEventListener('click', () => {
+    location.reload();
 });
 
 

@@ -8,6 +8,7 @@ import asyncio
 import os
 import shutil
 import replicate
+from moviepy import VideoFileClip, vfx
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -133,6 +134,59 @@ async def generate_video(file: UploadFile = File(...)):
     except Exception as e:
         print(f"Video Error: {e}")
         return {"error": str(e)}
+
+@app.post("/api/edit_video")
+async def edit_video(file: UploadFile = File(...), action: str = 'cinematic'):
+    try:
+        # Save temp input
+        temp_input = f"input_{file.filename}"
+        temp_output = f"output_{file.filename}"
+        
+        with open(temp_input, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        clip = VideoFileClip(temp_input)
+        
+        # Apply AI Montage Logic
+        if action == 'cinematic':
+            # Boost color and contrast simulation
+            new_clip = clip.with_effects([vfx.Colorx(1.2), vfx.GammaCorr(0.8)])
+        elif action == 'grayscale':
+            new_clip = clip.with_effects([vfx.BlackAndWhite()])
+        elif action == 'fast':
+            new_clip = clip.with_effects([vfx.MultiplySpeed(2.0)])
+        elif action == 'slow':
+            new_clip = clip.with_effects([vfx.MultiplySpeed(0.5)])
+        elif action == 'square':
+            # Crop to square for Instagram/TikTok
+            w, h = clip.size
+            size = min(w, h)
+            new_clip = clip.cropped(width=size, height=size, x_center=w/2, y_center=h/2)
+        else:
+            new_clip = clip
+
+        # Export result
+        new_clip.write_videofile(temp_output, codec="libx264", audio_codec="aac")
+        
+        # In a real app we would serve this file, for now we simulate the link
+        # or we could return the file as a response if small.
+        # For simplicity in this demo, let's represent it.
+        clip.close()
+        new_clip.close()
+        
+        # We need to serve this file. Let's add it to allowed_files in serve_static
+        # Actually better to just return the filename to the frontend and serve it.
+        return {"status": "success", "video_url": f"/api/files/{temp_output}"}
+        
+    except Exception as e:
+        print(f"Edit Error: {e}")
+        return {"error": str(e)}
+
+@app.get("/api/files/{filename}")
+async def get_processed_file(filename: str):
+    if os.path.exists(filename):
+        return FileResponse(filename)
+    return {"error": "File not found"}
 
 if __name__ == '__main__':
     print("="*60)

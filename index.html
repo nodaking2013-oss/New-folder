@@ -186,62 +186,74 @@
             </div>
         </section>
 
-        <!-- Editing Section -->
+        <!-- AI Video Studio (CapCut Style) -->
         <section id="editing" class="page-section hidden-section">
             <div class="section-header">
-                <h2>Smart <span class="gradient-text">Editing Studio</span></h2>
-                <p>Enhance your media with AI-powered tools</p>
+                <h2>AI <span class="gradient-text">Video Studio</span></h2>
+                <p>Professional AI-powered montage and editing in one click</p>
             </div>
 
-            <div class="editing-layout">
-                <div class="editing-preview glass-panel">
-                    <div class="upload-area" id="edit-upload-area">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        <p>Upload Image or Video</p>
-                        <input type="file" id="edit-media-input" accept="image/*,video/*" hidden>
-                    </div>
-                    <div class="media-container hidden" id="edit-media-container">
-                        <img id="edit-img-preview" src="" alt="Edit Preview">
+            <div class="editing-workspace glass-panel">
+                <div class="upload-area" id="edit-upload-area">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 7l-7 5 7 5V7z"></path>
+                        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                    </svg>
+                    <p>Upload Video for AI Montage or <span>Browse</span></p>
+                    <input type="file" id="edit-media-input" accept="video/*" hidden>
+                </div>
+
+                <div class="edit-studio hidden" id="edit-media-container">
+                    <div class="studio-layout">
+                        <div class="preview-side">
+                            <video id="edit-video-preview" controls class="studio-video"
+                                style="width:100%; border-radius:15px;"></video>
+                        </div>
+                        <div class="tools-side">
+                            <h3>AI Montage Options</h3>
+                            <div class="ai-options-grid">
+                                <div class="ai-opt-card active" data-action="cinematic">
+                                    <span class="icon">🎬</span>
+                                    <span>Cinematic</span>
+                                </div>
+                                <div class="ai-opt-card" data-action="fast">
+                                    <span class="icon">⚡</span>
+                                    <span>Fast Motion</span>
+                                </div>
+                                <div class="ai-opt-card" data-action="slow">
+                                    <span class="icon">🧊</span>
+                                    <span>Slow Motion</span>
+                                </div>
+                                <div class="ai-opt-card" data-action="grayscale">
+                                    <span class="icon">🌑</span>
+                                    <span>Vintage B&W</span>
+                                </div>
+                                <div class="ai-opt-card" data-action="square">
+                                    <span class="icon">📱</span>
+                                    <span>Social Crop</span>
+                                </div>
+                            </div>
+
+                            <button id="run-ai-edit-btn" class="primary-btn full-width" style="margin-top: 20px;">
+                                <span class="btn-text">Run AI Montage ✨</span>
+                                <div class="btn-loader hidden"></div>
+                            </button>
+                            <button class="text-btn" id="reset-edits-btn" style="margin-top: 10px;">Upload
+                                Another</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="editing-tools glass-panel">
-                    <h3>Adjustments</h3>
-
-                    <div class="tool-group">
-                        <label>Brightness</label>
-                        <input type="range" id="brightness" min="0" max="200" value="100">
+                <div class="edit-result-area hidden" id="edit-result-area">
+                    <div class="success-header">
+                        <div class="success-icon">✓</div>
+                        <h3>AI Montage Complete!</h3>
                     </div>
-                    <div class="tool-group">
-                        <label>Contrast</label>
-                        <input type="range" id="contrast" min="0" max="200" value="100">
-                    </div>
-
-                    <div class="tool-group">
-                        <label>AI Filters</label>
-                        <div class="filter-options">
-                            <button class="filter-btn active" data-filter="none">None</button>
-                            <button class="filter-btn" data-filter="cyberpunk">Cyberpunk</button>
-                            <button class="filter-btn" data-filter="cinematic">Cinematic</button>
-                            <button class="filter-btn" data-filter="ethereal">Ethereal</button>
-                        </div>
-                    </div>
-
-                    <div class="tool-group">
-                        <label>Trim (Video Only)</label>
-                        <div class="trim-timeline">
-                            <div class="trim-handles"></div>
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button id="download-edit-btn" class="primary-btn" disabled>Download Edited File</button>
-                        <button id="reset-edits-btn" class="text-btn">Reset</button>
+                    <video id="edit-final-video" controls class="final-video"
+                        style="width:100%; max-width: 600px; border-radius:15px; margin: 20px auto; display: block;"></video>
+                    <div class="result-actions" style="display: flex; gap: 15px; justify-content: center;">
+                        <a id="download-final-video" href="#" download class="primary-btn">Download Video</a>
+                        <button class="secondary-btn" onclick="location.reload()">Start Over</button>
                     </div>
                 </div>
             </div>
